@@ -217,26 +217,6 @@ const GitHubAnalyzer = ({
       .sort((a, b) => a.year - b.year);
   };
 
-  const getContributionStreak = () => {
-    let currentStreak = 0;
-    let maxStreak = 0;
-    
-    state.commitData.forEach(week => {
-      week.days.forEach(commits => {
-        if (commits > 0) {
-          currentStreak++;
-          maxStreak = Math.max(maxStreak, currentStreak);
-        } else {
-          currentStreak = 0;
-        }
-      });
-    });
-    
-    return maxStreak;
-  };
-
-
-
   const formatLinesOfCode = (lines: number) => {
     const actualLines = Math.round(lines / 100);
                 if (actualLines >= 1000000) {
@@ -361,9 +341,9 @@ const GitHubAnalyzer = ({
                <GitBranch className="text-green-500" size={20} />
                <div>
                  <div className="text-2xl font-bold text-white">
-                   {getContributionStreak()}
+                   {state.commitData.reduce((sum, week) => sum + week.total, 0).toLocaleString()}
                  </div>
-                 <div className="text-gray-400 text-sm">Day Streak Record</div>
+                 <div className="text-gray-400 text-sm">Total Commits</div>
                </div>
              </div>
            </CardContent>
@@ -491,7 +471,6 @@ const GitHubAnalyzer = ({
              </div>
            </CardContent>
          </Card>
-
          <Card className="bg-[#1e2128] border-gray-700">
            <CardHeader>
              <CardTitle className="text-white text-lg">Yearly Activity</CardTitle>
