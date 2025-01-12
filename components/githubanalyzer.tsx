@@ -216,73 +216,6 @@ const GitHubAnalyzer = ({
       .map(([year, commits]) => ({ year, commits }))
       .sort((a, b) => a.year - b.year);
   };
-  const calculateCommitGrowth = () => {
-    const now = new Date();
-    const oneYearAgo = new Date(now);
-    oneYearAgo.setFullYear(now.getFullYear() - 1);
-    const twoYearsAgo = new Date(oneYearAgo);
-    twoYearsAgo.setFullYear(oneYearAgo.getFullYear() - 1);
-  
-    const oneYearAgoTs = oneYearAgo.getTime();
-    const twoYearsAgoTs = twoYearsAgo.getTime();
-  
-    const periods = state.commitData.reduce((acc, week) => {
-      const weekDate = new Date(week.week * 1000);
-      const weekTs = weekDate.getTime();
-      
-      if (weekTs >= oneYearAgoTs) {
-        acc.thisYear += week.total;
-        acc.thisYearWeeks++;
-      } else if (weekTs >= twoYearsAgoTs) {
-        acc.lastYear += week.total;
-        acc.lastYearWeeks++;
-      }
-      return acc;
-    }, { thisYear: 0, lastYear: 0, thisYearWeeks: 0, lastYearWeeks: 0 });
-  
-    if (periods.thisYearWeeks === 0 || periods.lastYearWeeks === 0) {
-      return 0;
-    }
-  
-    const thisYearAvg = periods.thisYear / periods.thisYearWeeks;
-    const lastYearAvg = periods.lastYear / periods.lastYearWeeks;
-  
-    if (lastYearAvg === 0) return thisYearAvg > 0 ? 100 : 0;
-  
-    const growth = ((thisYearAvg - lastYearAvg) / lastYearAvg) * 100;
-    return Math.round(growth);
-  };
-
-  const getCommitGrowthClass = () => {
-    const growth = calculateCommitGrowth();
-    return growth > 0 ? 'text-green-400' : growth < 0 ? 'text-red-400' : 'text-gray-400';
-  };
-
-  const getCommitGrowthIcon = () => {
-    const growth = calculateCommitGrowth();
-    return growth > 0 ? '↑' : growth < 0 ? '↓' : '→';
-  };
-
-  const getMostActiveTime = () => {
-    const commitsByHour = new Array(24).fill(0);
-    state.commitData.forEach(week => {
-      week.days.forEach((commits, dayIndex) => {
-        for (let i = 0; i < commits; i++) {
-          const hour = Math.floor(Math.random() * 24);
-          commitsByHour[hour]++;
-        }
-      });
-    });
-    
-    const maxHour = commitsByHour.indexOf(Math.max(...commitsByHour));
-    return `${maxHour}:00 - ${(maxHour + 1) % 24}:00`;
-  };
-
-  const getAverageCommitsPerDay = () => {
-    const totalDays = state.commitData.length * 7;
-    const totalCommits = state.commitData.reduce((sum, week) => sum + week.total, 0);
-    return (totalCommits / totalDays).toFixed(1);
-  };
 
   const getContributionStreak = () => {
     let currentStreak = 0;
@@ -427,13 +360,10 @@ const GitHubAnalyzer = ({
              <div className="flex items-center gap-3">
                <GitBranch className="text-green-500" size={20} />
                <div>
-                 <div className="text-2xl font-bold text-white flex items-center gap-2">
-                   {calculateCommitGrowth()}%
-                   <span className={`text-sm ${getCommitGrowthClass()}`}>
-                     {getCommitGrowthIcon()}
-                   </span>
+                 <div className="text-2xl font-bold text-white">
+                   {getContributionStreak()}
                  </div>
-                 <div className="text-gray-400 text-sm">Commit Growth</div>
+                 <div className="text-gray-400 text-sm">Day Streak Record</div>
                </div>
              </div>
            </CardContent>
