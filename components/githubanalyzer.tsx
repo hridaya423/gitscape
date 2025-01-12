@@ -6,7 +6,6 @@ import { Search, GitBranch, Star, BookOpen, Users, Calendar, Code, Globe, Link a
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-
 interface GitHubUser {
   login: string;
   name: string | null;
@@ -17,7 +16,6 @@ interface GitHubUser {
   created_at: string;
   html_url: string;
 }
-
 interface GitHubRepo {
   id: number;
   name: string;
@@ -113,7 +111,7 @@ const GitHubAnalyzer = ({
   
       const totalLinesOfCode = repoData.reduce((sum, repo) => sum + (repo.size * 100), 0);
   
-      const commitPromises = repoData.slice(0, 5).map(repo => 
+      const commitPromises = repoData.map(repo => 
         fetchWithRetry(
           `https://api.github.com/repos/${state.username}/${repo.name}/stats/commit_activity`,
           headers
@@ -135,7 +133,7 @@ const GitHubAnalyzer = ({
   
       setTimeout(() => {
         onCapture?.();
-      }, 1000);
+      }, 2000);
   
     } catch (error) {
       setState(prev => ({
@@ -343,7 +341,7 @@ const GitHubAnalyzer = ({
                  <div className="text-2xl font-bold text-white">
                    {state.commitData.reduce((sum, week) => sum + week.total, 0).toLocaleString()}
                  </div>
-                 <div className="text-gray-400 text-sm">Total Commits</div>
+                 <div className="text-gray-400 text-sm">Lifetime Commits</div>
                </div>
              </div>
            </CardContent>
