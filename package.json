@@ -23,7 +23,7 @@
     "next": "16.0.7",
     "react": "^19.0.0",
     "react-dom": "^19.2.1",
-    "react-element-to-jsx-string": "^15.0.0",
+    "react-element-to-jsx-string": "^17.0.1",
     "recharts": "^3.5.1",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
